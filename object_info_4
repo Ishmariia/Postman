@@ -1,0 +1,64 @@
+
+// GET запрос на http://162.55.220.72:5005/object_info_4
+
+// 1.Спарсить response body в json
+let responseInJson = pm.response.json();
+responseInJson.age
+responseInJson.name
+responseInJson.salary
+let res_age = String(responseInJson.age)
+
+// 2.Спарсить request
+let req = pm.request.url.query.toObject();
+
+let req_name = req.name;
+let req_age = req.age;
+let req_salary = req.salary
+
+// 3.Статус код 200
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+// 4.Проверить, что name в ответе равно name s request (name забрать из request)
+pm.test("Name", function () {
+    pm.expect(responseInJson.name).to.eql(req_name);
+});
+
+// 5.Проверить, что age в ответе равно age s request (age забрать из request)
+pm.test("Age", function () {
+    pm.expect(res_age).to.eql(req_age);
+});
+
+// 6. Вывести в консоль параметр salary из request
+console.log("Request_salary -", req_salary)
+// 7. Вывести в консоль параметр salary из response
+console.log("Response_salary", responseInJson.salary)
+
+// 8.Вывести в консоль 0-й элемент параметра salary из response
+console.log("Response_salary_0 -", responseInJson.salary[0])
+// 9. Вывести в консоль 1-й элемент параметра salary параметр salary из response
+console.log("Request_salary_1 -", responseInJson.salary[1])
+//  10. Вывести в консоль 2-й элемент параметра salary параметр salary из response
+console.log("Request_salary_2 -", responseInJson.salary[2])
+
+// 11.Проверить, что 0-й элемент параметра salary равен salary из request (salary забрать из request)
+pm.test("Eq_salary_0", function () {
+    pm.expect(String(responseInJson.salary[0])).to.eql(req_salary);
+});
+
+// 12.Проверить, что 1-й элемент параметра salary равен salary*2 из request (salary забрать из request)
+pm.test("Equality_salary*2", function () {
+    pm.expect(responseInJson.salary[1]).to.eql(String(req_salary*2));
+});
+
+// 13.Проверить, что 2-й элемент параметра salary равен salary*3 из request (salary забрать из request)
+pm.test("Equality_salary*3", function () {
+    pm.expect(responseInJson.salary[2]).to.eql(String(req_salary*3));
+});
+
+pm.environment.set("name", req.name);
+pm.environment.set("age", req.age);
+pm.environment.set("salary", req.salary);
+
+responseInJson.salary.forEach((item) => {console.log(item)});
